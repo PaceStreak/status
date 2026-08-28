@@ -106,8 +106,8 @@ status-website:
   cname: status.pacestreak.com
   name: PaceStreak Status
   theme: dark
-  logoUrl: https://www.pacestreak.com/favicon.svg
-  faviconSvg: https://www.pacestreak.com/favicon.svg
+  logoUrl: https://www.pacestreak.com/brand/logo.svg
+  faviconSvg: https://www.pacestreak.com/brand/logo.svg
   introTitle: "**PaceStreak** service status"
   introMessage: Live availability and response times for pacestreak.com. Every endpoint is checked from GitHub Actions every 5 minutes; incidents are tracked as [GitHub issues](https://github.com/$OWNER/$REPO/issues).
   navbar:
