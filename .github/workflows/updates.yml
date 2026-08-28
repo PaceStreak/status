@@ -14,6 +14,12 @@
 # * More by Anand Chowdhary: https://anandchowdhary.com
 
 
+# NOTE (2026-08-28): `update-template` cannot regenerate this file. GITHUB_TOKEN
+# is categorically forbidden from writing under .github/workflows, whatever the
+# org's workflow permissions say. Regenerating these from CI requires a personal
+# access token with the `workflow` scope stored as the GH_PAT secret. Until then
+# these files are maintained by hand, and edits here will NOT be overwritten.
+
 name: Updates CI
 on:
   schedule:
