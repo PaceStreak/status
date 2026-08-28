@@ -1,31 +1,265 @@
-# Change these first
-owner: upptime # Your GitHub organization or username, where this repository lives
-repo: upptime # The name of this repository
+# PaceStreak status page configuration
+# Docs: https://upptime.js.org/docs/configuration
+#
+# This file is the single source of truth. Everything in .github/workflows is
+# GENERATED from it by the `update-template` job — never edit those by hand,
+# your changes are deleted and rewritten on the next run.
 
+owner: PaceStreak # GitHub organization that owns this repository
+repo: status # Name of this repository
+
+user-agent: PaceStreak
+
+# ---------------------------------------------------------------------------
+# Monitors
+# ---------------------------------------------------------------------------
+# `slug` pins the generated filenames under history/, api/ and graphs/. Set it
+# explicitly: without it the slug is derived from `name`, so renaming a monitor
+# silently orphans its recorded history and the old data gets pruned.
+#
+# `__dangerous__body_down_if_text_missing` guards the "200 OK but the page is
+# broken" failure mode — a healthy status code is not proof the page rendered.
+# The string below was verified present in the served HTML.
 sites:
-  - name: Google
-    url: https://www.google.com
-  - name: Wikipedia
-    url: https://en.wikipedia.org
-  - name: Hacker News
-    url: https://news.ycombinator.com
-  - name: Secret Site
-    url: $SECRET_SITE
+  # www is canonical; the apex 301-redirects to it.
+  - name: www.pacestreak.com
+    slug: www-pacestreak-com
+    url: https://www.pacestreak.com
+    maxResponseTime: 3000
+    expectedStatusCodes:
+      - 200
+    __dangerous__body_down_if_text_missing: "PaceStreak"
+    maxRedirects: 3
+    connectTimeout: 10
+    requestTimeout: 30
 
+  # Redirects are followed, so this asserts the whole chain — DNS, certificate,
+  # the redirect rule, and the destination rendering — not merely that the apex
+  # resolves.
+  - name: pacestreak.com
+    slug: pacestreak-com
+    url: https://pacestreak.com # -> www.pacestreak.com
+    maxResponseTime: 3000
+    expectedStatusCodes:
+      - 200
+    __dangerous__body_down_if_text_missing: "PaceStreak"
+    maxRedirects: 3
+    connectTimeout: 10
+    requestTimeout: 30
+
+  # -------------------------------------------------------------------------
+  # TLS certificate expiry
+  # -------------------------------------------------------------------------
+  # `check: ssl` reads the certificate's notAfter date. It reports DOWN when
+  # under 7 days remain — there is no intermediate "expiring soon" state.
+  #
+  # NOTE: for ssl checks `url` must be a BARE HOSTNAME. The value is passed
+  # straight to https.request as `host`; an "https://" prefix fails.
+  #
+  # Cloudflare Pages issues a SEPARATE certificate per custom domain — verified
+  # 2026-08-28: the apex cert's SAN list is [pacestreak.com] and www's is
+  # [www.pacestreak.com], with different notAfter timestamps. They are not one
+  # cert with two names, so one check cannot cover both. The apex matters even
+  # though it only redirects: an expired cert there is a browser interstitial
+  # before the redirect ever runs.
+  - name: www.pacestreak.com TLS certificate
+    slug: www-pacestreak-com-tls
+    url: www.pacestreak.com
+    check: ssl
+
+  - name: pacestreak.com TLS certificate
+    slug: pacestreak-com-tls
+    url: pacestreak.com
+    check: ssl
+
+# ---------------------------------------------------------------------------
+# Secrets allowlist
+# ---------------------------------------------------------------------------
+# When present this key is EXHAUSTIVE — only these are injected into the
+# workflow's SECRETS_CONTEXT. Keeping it explicit is least-privilege: without
+# it, Upptime emits references for every notification provider it supports
+# (~90 entries), most of which will never be set.
+secrets:
+  - NOTIFICATION_EMAIL_SMTP
+  - NOTIFICATION_EMAIL_SMTP_HOST
+  - NOTIFICATION_EMAIL_SMTP_PORT
+  - NOTIFICATION_EMAIL_SMTP_USERNAME
+  - NOTIFICATION_EMAIL_SMTP_PASSWORD
+  - NOTIFICATION_EMAIL_FROM
+  - NOTIFICATION_EMAIL_TO
+
+# ---------------------------------------------------------------------------
+# Incidents
+# ---------------------------------------------------------------------------
+# Downtime opens a GitHub issue; recovery closes it. This repo is the log.
+assignees:
+  - AlzyWelzy
+
+# Keep issues for outages that resolve in under 15 minutes instead of deleting
+# them. Flapping is a real signal and belongs in the audit trail.
+skipDeleteIssues: true
+
+# ---------------------------------------------------------------------------
+# Status page
+# ---------------------------------------------------------------------------
 status-website:
-  # Add your custom domain name, or remove the `cname` line if you don't have a domain
-  # Uncomment the `baseUrl` line if you don't have a custom domain and add your repo name there
-  cname: demo.upptime.js.org
-  # baseUrl: /your-repo-name
-  logoUrl: https://raw.githubusercontent.com/upptime/upptime.js.org/master/static/img/icon.svg
-  name: Upptime
-  introTitle: "**Upptime** is the open-source uptime monitor and status page, powered entirely by GitHub."
-  introMessage: This is a sample status page which uses **real-time** data from our [GitHub repository](https://github.com/upptime/upptime). No server required — just GitHub Actions, Issues, and Pages. [**Get your own for free**](https://github.com/upptime/upptime)
+  cname: status.pacestreak.com
+  name: PaceStreak Status
+  theme: dark
+  logoUrl: https://www.pacestreak.com/favicon.svg
+  faviconSvg: https://www.pacestreak.com/favicon.svg
+  introTitle: "**PaceStreak** service status"
+  introMessage: Live availability and response times for pacestreak.com. Every endpoint is checked from GitHub Actions every 5 minutes; incidents are tracked as [GitHub issues](https://github.com/$OWNER/$REPO/issues).
   navbar:
     - title: Status
       href: /
+    - title: Website
+      href: https://www.pacestreak.com
+    - title: Incidents
+      href: https://github.com/$OWNER/$REPO/issues
     - title: GitHub
-      href: https://github.com/$OWNER/$REPO
+      href: https://github.com/$OWNER
+  metaTags:
+    - name: description
+      content: Live uptime and response-time status for PaceStreak.
+    - name: og:title
+      content: PaceStreak Status
+    - name: og:description
+      content: Live uptime and response-time status for PaceStreak.
+    - name: og:url
+      content: https://status.pacestreak.com
+    - name: og:type
+      content: website
+    - name: twitter:card
+      content: summary
+  robotsText: |
+    User-agent: *
+    Allow: /
+    Sitemap: https://status.pacestreak.com/sitemap.xml
 
-# Upptime also supports notifications, assigning issues, and more
-# See https://upptime.js.org/docs/configuration
+  # -------------------------------------------------------------------------
+  # Theme
+  # -------------------------------------------------------------------------
+  # `theme: dark` loads themes/dark.css; this block is injected as an inline
+  # <style> AFTER it, so these :root values win. Every name here is a variable
+  # the status page actually reads (the full set is in upptime/status-page
+  # static/themes/dark.css) — an invented name is a silent no-op.
+  #
+  # Values match the pacestreak.com palette so the status page reads as part of
+  # the product, not a bolted-on third-party service.
+  css: |
+    :root {
+      --body-background-color: #0a0a0b;
+      --body-text-color: #f4f4f5;
+      --card-background-color: #141417;
+      --card-border-color: #26262c;
+
+      --nav-background-color: #141417;
+      --nav-border-bottom-color: #26262c;
+      --nav-current-border-bottom-color: #d3ff3e;
+
+      /* Status accents keep the conventional green/amber/red mapping — brand
+         fit never outranks legibility on a status page. */
+      --up-border-left-color: #d3ff3e;
+      --degraded-border-left-color: #f7b731;
+      --down-border-left-color: #ff6b35;
+      --down-background-color: #2a0f08;
+
+      --tag-color: #14170a;
+      --tag-up-background-color: #d3ff3e;
+      --tag-degraded-background-color: #f7b731;
+      --tag-down-background-color: #ff6b35;
+      --change-background-color: #f7b731;
+
+      --submit-button-background-color: #d3ff3e;
+      --submit-button-border-color: #d3ff3e;
+      --submit-button-color: #14170a;
+      --error-button-background-color: #d3ff3e;
+      --error-button-border-color: #d3ff3e;
+      --error-button-color: #14170a;
+
+      /* NOTE: inert on the status list. global.css applies these via
+         `article .graph` (a descendant), but LiveStatus puts `.graph` on the
+         article ITSELF, so the rule never matches. Left at no-op values; the
+         list sparklines are toned down with a scrim below instead. */
+      --graph-opacity: 1;
+      --graph-filter: none;
+    }
+
+    body {
+      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+        "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    header h1 { font-size: 2.25rem; letter-spacing: -0.022em; }
+    header p.lead { color: #a1a1aa; max-width: 62ch; }
+
+    section.live-status article.link {
+      border-radius: 0.6rem;
+      transition: border-color 0.18s ease, transform 0.18s ease;
+    }
+    section.live-status article.link:hover {
+      border-color: #34343d;
+      transform: translateY(-1px);
+    }
+    section.live-status article + article { margin-top: 0.6rem; }
+
+    /* The response-time PNGs are a fixed bright mint (#89e0cf, hardcoded in
+       upptime/graphs — not configurable). Layering a card-coloured scrim OVER
+       the image dims the image alone; opacity on the article would fade the
+       text with it. */
+    article.graph.link {
+      background-image: linear-gradient(rgba(20, 20, 23, 0.55), rgba(20, 20, 23, 0.55)),
+        var(--background);
+      background-size: cover, auto 74%;
+      background-position: center, right 0.85rem center;
+      background-repeat: no-repeat, no-repeat;
+    }
+
+    section.live-status article > div { color: #a1a1aa; font-size: 0.94rem; }
+    article.graph .data {
+      color: #f4f4f5;
+      font-weight: 600;
+      font-variant-numeric: tabular-nums;
+    }
+    section.live-status article h4 { margin-bottom: 0.35rem; }
+
+    /* Under 560px the sparkline runs beneath the latency figure. Decoration
+       loses to the number. */
+    @media (max-width: 560px) {
+      article.graph.link { background-image: none; }
+    }
+
+    /* A `check: ssl` monitor has no HTTP origin, so uptime-monitor writes
+       icon ".../null.ico" (DuckDuckGo answers with a generic glyph) and
+       responseTime 0. The card would show a meaningless icon and an
+       authoritative-looking "0 ms" that measures nothing. No class marks these
+       cards, but the null icon is an exact, stable marker of one. If :has() is
+       unavailable the rule is dropped and the row simply reappears. */
+    article img.icon[src*="null.ico"] { display: none; }
+    article:has(img.icon[src*="null.ico"]) > div + div { display: none; }
+
+# ---------------------------------------------------------------------------
+# Commit messages
+# ---------------------------------------------------------------------------
+# [skip ci] on the bookkeeping commits stops them retriggering other workflows.
+commitMessages:
+  readmeContent: ":pencil: Update summary in README [skip ci] [upptime]"
+  summaryJson: ":card_file_box: Update status summary [skip ci] [upptime]"
+  statusChange: "$EMOJI $SITE_NAME is $STATUS ($RESPONSE_CODE in $RESPONSE_TIME ms) [skip ci] [upptime]"
+  graphsUpdate: ":bento: Update graphs [skip ci] [upptime]"
+  commitAuthorName: "Upptime Bot"
+  commitAuthorEmail: "73812536+upptime-bot@users.noreply.github.com"
+
+# ---------------------------------------------------------------------------
+# Schedules (cron, UTC)
+# ---------------------------------------------------------------------------
+workflowSchedule:
+  uptime: "*/5 * * * *" # Check every 5 minutes
+  responseTime: "0 23 * * *" # Record response times daily
+  graphs: "0 0 * * *" # Regenerate graphs daily
+  staticSite: "0 1 * * *" # Rebuild + deploy the status page daily
+  summary: "0 0 * * *" # Refresh README summary daily
+  updates: "0 3 * * *" # Check for Upptime updates daily
+  updateTemplate: "0 0 * * 0" # Apply template updates weekly
