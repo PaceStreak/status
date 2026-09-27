@@ -47,6 +47,45 @@ sites:
     connectTimeout: 10
     requestTimeout: 30
 
+  - name: blog.pacestreak.com
+    slug: blog-pacestreak-com
+    url: https://blog.pacestreak.com
+    maxResponseTime: 3000
+    expectedStatusCodes:
+      - 200
+    __dangerous__body_down_if_text_missing: "PaceStreak"
+    maxRedirects: 3
+    connectTimeout: 10
+    requestTimeout: 30
+
+  # The product itself: React PWA shell, served noindex. A 200 here still
+  # proves nothing about the API behind it, hence the separate api.
+  # monitor below — the app can render its shell while every API call fails.
+  - name: app.pacestreak.com
+    slug: app-pacestreak-com
+    url: https://app.pacestreak.com
+    maxResponseTime: 3000
+    expectedStatusCodes:
+      - 200
+    __dangerous__body_down_if_text_missing: "PaceStreak"
+    maxRedirects: 3
+    connectTimeout: 10
+    requestTimeout: 30
+
+  # /health is unauthenticated and cheap (no DB round-trip beyond a liveness
+  # check), so it is safe to hit every 5 minutes without adding to the
+  # per-IP rate limits real users share.
+  - name: api.pacestreak.com
+    slug: api-pacestreak-com
+    url: https://api.pacestreak.com/health
+    maxResponseTime: 3000
+    expectedStatusCodes:
+      - 200
+    __dangerous__body_down_if_text_missing: "healthy"
+    maxRedirects: 0
+    connectTimeout: 10
+    requestTimeout: 30
+
   # -------------------------------------------------------------------------
   # TLS certificate expiry
   # -------------------------------------------------------------------------
@@ -70,6 +109,21 @@ sites:
   - name: pacestreak.com TLS certificate
     slug: pacestreak-com-tls
     url: pacestreak.com
+    check: ssl
+
+  - name: blog.pacestreak.com TLS certificate
+    slug: blog-pacestreak-com-tls
+    url: blog.pacestreak.com
+    check: ssl
+
+  - name: app.pacestreak.com TLS certificate
+    slug: app-pacestreak-com-tls
+    url: app.pacestreak.com
+    check: ssl
+
+  - name: api.pacestreak.com TLS certificate
+    slug: api-pacestreak-com-tls
+    url: api.pacestreak.com
     check: ssl
 
 # ---------------------------------------------------------------------------
@@ -115,6 +169,8 @@ status-website:
       href: /
     - title: Website
       href: https://www.pacestreak.com
+    - title: Blog
+      href: https://blog.pacestreak.com
     - title: Incidents
       href: https://github.com/$OWNER/$REPO/issues
     - title: GitHub
