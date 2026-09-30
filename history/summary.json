@@ -76,18 +76,20 @@
     "url": "https://api.pacestreak.com/health",
     "icon": "https://icons.duckduckgo.com/ip3/api.pacestreak.com.ico",
     "slug": "api-pacestreak-com",
-    "status": "up",
+    "status": "down",
     "uptime": "100.00%",
-    "uptimeDay": "100.00%",
+    "uptimeDay": "99.99%",
     "uptimeWeek": "100.00%",
     "uptimeMonth": "100.00%",
     "uptimeYear": "100.00%",
-    "time": 491,
-    "timeDay": 300,
-    "timeWeek": 491,
-    "timeMonth": 491,
-    "timeYear": 491,
-    "dailyMinutesDown": {}
+    "time": 1090,
+    "timeDay": 1894,
+    "timeWeek": 1090,
+    "timeMonth": 1090,
+    "timeYear": 1090,
+    "dailyMinutesDown": {
+      "2026-09-30": 0
+    }
   },
   {
     "name": "www.pacestreak.com TLS certificate",
