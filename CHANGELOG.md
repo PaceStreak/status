@@ -5,6 +5,12 @@ Notable changes to the monitoring configuration. The data commits under
 
 Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## 2026-10-02
+
+### Changed
+
+- `AGENTS.md` added; the README's monitor table lists all ten monitors.
+
 ## 2026-08-28
 
 ### Added

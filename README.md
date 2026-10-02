@@ -38,14 +38,16 @@ No servers, no third-party monitoring service, no bill.
 
 ## What is monitored
 
-| Monitor                  | Why                                                                                                                                               |
-| ------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `www.pacestreak.com`     | The canonical hostname. Asserts a 200 **and** that "PaceStreak" appears in the body — a healthy status code alone is not proof the page rendered. |
-| `pacestreak.com`         | The apex. Redirects are followed, so this asserts the whole chain: DNS, certificate, the Cloudflare redirect rule, and the destination rendering. |
-| `www.pacestreak.com` TLS | Certificate expiry.                                                                                                                               |
-| `pacestreak.com` TLS     | Certificate expiry — **a separate certificate**, see below.                                                                                       |
+| Monitor | Why |
+| --- | --- |
+| `www.pacestreak.com` | The canonical hostname. Asserts a 200 **and** that "PaceStreak" appears in the body — a healthy status code alone is not proof the page rendered. |
+| `pacestreak.com` | The apex. Redirects are followed, so this asserts the whole chain: DNS, certificate, the Cloudflare redirect rule, and the destination rendering. |
+| `blog.pacestreak.com` | The blog, with the same body assertion. |
+| `app.pacestreak.com` | The product's PWA shell. A 200 here proves nothing about the API behind it, hence the next monitor. |
+| `api.pacestreak.com` | `/health`, asserting `"healthy"` in the body. Cheap and unauthenticated, so checking every five minutes never eats into the per-IP rate limits real users share. |
+| TLS, one per hostname | Certificate expiry for each of the five hosts above; DOWN when under 7 days remain. |
 
-### Why two certificate checks
+### Why one certificate check per hostname
 
 Cloudflare Pages issues a **separate certificate per custom domain**. Verified
 2026-08-28: the apex certificate's SAN list is `[pacestreak.com]` and www's is
