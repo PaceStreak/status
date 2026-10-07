@@ -76,20 +76,20 @@
     "url": "https://api.pacestreak.com/health",
     "icon": "https://icons.duckduckgo.com/ip3/api.pacestreak.com.ico",
     "slug": "api-pacestreak-com",
-    "status": "down",
-    "uptime": "97.78%",
-    "uptimeDay": "99.99%",
-    "uptimeWeek": "96.94%",
-    "uptimeMonth": "97.78%",
-    "uptimeYear": "97.78%",
-    "time": 808,
-    "timeDay": 910,
-    "timeWeek": 935,
-    "timeMonth": 808,
-    "timeYear": 808,
+    "status": "up",
+    "uptime": "94.77%",
+    "uptimeDay": "69.42%",
+    "uptimeWeek": "92.57%",
+    "uptimeMonth": "94.77%",
+    "uptimeYear": "94.77%",
+    "time": 874,
+    "timeDay": 1205,
+    "timeWeek": 1013,
+    "timeMonth": 874,
+    "timeYear": 874,
     "dailyMinutesDown": {
       "2026-09-30": 308,
-      "2026-10-07": 0
+      "2026-10-07": 440
     }
   },
   {
