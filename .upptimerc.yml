@@ -86,6 +86,19 @@ sites:
     connectTimeout: 10
     requestTimeout: 30
 
+  # The API's scheduled jobs (cron triggers on the Worker): 200 while the last
+  # tick is under 15 minutes old, 503 "stale" after three missed ticks.
+  - name: API scheduled jobs
+    slug: api-scheduled-jobs
+    url: https://api.pacestreak.com/health/worker
+    maxResponseTime: 3000
+    expectedStatusCodes:
+      - 200
+    __dangerous__body_down_if_text_missing: '"status":"ok"'
+    maxRedirects: 0
+    connectTimeout: 10
+    requestTimeout: 30
+
   # -------------------------------------------------------------------------
   # TLS certificate expiry
   # -------------------------------------------------------------------------
