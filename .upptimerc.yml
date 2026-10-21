@@ -72,6 +72,19 @@ sites:
     connectTimeout: 10
     requestTimeout: 30
 
+  # The docs site (infra/site): static, noindex. The body check proves it is
+  # the built site and not a Pages placeholder.
+  - name: docs.pacestreak.com
+    slug: docs-pacestreak-com
+    url: https://docs.pacestreak.com
+    maxResponseTime: 3000
+    expectedStatusCodes:
+      - 200
+    __dangerous__body_down_if_text_missing: "PaceStreak"
+    maxRedirects: 3
+    connectTimeout: 10
+    requestTimeout: 30
+
   # /health is unauthenticated and cheap (no DB round-trip beyond a liveness
   # check), so it is safe to hit every 5 minutes without adding to the
   # per-IP rate limits real users share.
@@ -117,6 +130,11 @@ sites:
   - name: www.pacestreak.com TLS certificate
     slug: www-pacestreak-com-tls
     url: www.pacestreak.com
+    check: ssl
+
+  - name: docs.pacestreak.com TLS certificate
+    slug: docs-pacestreak-com-tls
+    url: docs.pacestreak.com
     check: ssl
 
   - name: pacestreak.com TLS certificate
